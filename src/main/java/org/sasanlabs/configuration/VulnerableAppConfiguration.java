@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import org.sasanlabs.internal.utility.LevelConstants;
 import org.sasanlabs.service.vulnerability.fileupload.UnrestrictedFileUpload;
@@ -29,7 +29,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.multipart.support.MultipartFilter;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
@@ -174,21 +173,6 @@ public class VulnerableAppConfiguration {
     @Bean
     @Order(0)
     public MultipartFilter multipartFilter() {
-        class MaxUploadSizeOverrideMultipartFilter extends MultipartFilter {
-            @Override
-            protected MultipartResolver lookupMultipartResolver(HttpServletRequest request) {
-                if (MAX_FILE_UPLOAD_SIZE_OVERRIDE_PATHS.contains(request.getServletPath())) {
-                    CommonsMultipartResolver multipart = new CommonsMultipartResolver();
-                    multipart.setMaxUploadSize(-1);
-                    multipart.setMaxUploadSizePerFile(-1);
-                    return multipart;
-                } else {
-                    // returns default implementation
-                    return lookupMultipartResolver();
-                }
-            }
-        }
-        ;
-        return new MaxUploadSizeOverrideMultipartFilter();
+        return new MultipartFilter();
     }
 }
